@@ -1,0 +1,92 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    color-scheme: dark;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-abyss text-paper font-serif leading-relaxed;
+    overflow-x: hidden;
+  }
+
+  h1,
+  h2,
+  h3 {
+    @apply font-serif;
+    text-wrap: balance;
+  }
+
+  p {
+    @apply font-sans;
+  }
+
+  :focus-visible {
+    outline: 3px solid theme("colors.gold");
+    outline-offset: 3px;
+    border-radius: 4px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    * {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+}
+
+@layer components {
+  /* Skip link: hidden until focused. */
+  .skip-link {
+    @apply absolute left-2 top-2 z-50 -translate-y-16 rounded bg-gold px-4 py-2 font-sans text-sm font-semibold text-abyss transition-transform;
+  }
+  .skip-link:focus {
+    @apply translate-y-0;
+  }
+
+  /* Story scene media area — accepts layered reef artwork later. */
+  .scene-media {
+    @apply relative overflow-hidden rounded-2xl border border-white/10;
+    min-height: 14rem;
+  }
+  .scene-media::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    /* one light source, upper-left, shared across every scene */
+    background: radial-gradient(
+      120% 90% at 20% -10%,
+      rgba(245, 250, 248, 0.28),
+      transparent 60%
+    );
+    pointer-events: none;
+  }
+
+  /* Tonal progression: healthy -> stressed -> bleached -> recovery. */
+  .tone-surface {
+    background: linear-gradient(180deg, #f4e9cf 0%, #8bd7cf 50%, #157e88 100%);
+  }
+  .tone-healthy {
+    background: linear-gradient(180deg, #0b3a52 0%, #157e88 55%, #0b3a52 100%);
+  }
+  .tone-warming {
+    background: linear-gradient(180deg, #157e88 0%, #557c86 60%, #0b3a52 100%);
+  }
+  .tone-bleached {
+    background: linear-gradient(180deg, #557c86 0%, #8b979b 50%, #0b3a52 100%);
+    filter: saturate(0.55);
+  }
+  .tone-recovery {
+    background: linear-gradient(180deg, #5e7f88 0%, #157e88 60%, #061c2d 100%);
+  }
+}

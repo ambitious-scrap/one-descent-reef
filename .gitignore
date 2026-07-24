@@ -11,6 +11,9 @@ coverage/
 .DS_Store
 __MACOSX/
 .memsearch/
+.serena/
+*.tsbuildinfo
+
 
 # IDE
 .vscode/
