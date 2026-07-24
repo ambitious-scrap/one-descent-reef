@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="ONE DESCENT — dive a living reef, witness its bleaching, meet the hands restoring it, and resurface with a reason. REEF protects coral reefs and marine ecosystems.">
+<title>ONE DESCENT — REEF</title>
+<style>
+/* ============ PALETTE (locked) ============ */
+:root{
+  --abyss:#061C2D; --deep:#0B3A52; --teal:#157E88; --seaglass:#8BD7CF;
+  --surface:#F4E9CF; --coral:#ED725C; --amber:#E8A94E; --violet:#8A5FA8;
+  --green:#4DAA82; --gold:#F2C14E; --shell:#D9D2BF; --ash:#9AA3A4; --white:#F5FAF8;
+  --milky:#557C86;
+}
+/* ============ BASE ============ */
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+body{
+  font-family: Georgia, 'Source Serif 4', serif;
+  color:var(--white); background:var(--abyss);
+  line-height:1.6; overflow-x:hidden;
+}
+h1,h2{font-weight:600; letter-spacing:.01em}
+p,figcaption,a{font-family:'Inter','Helvetica Neue',Arial,sans-serif}
+.skip{position:absolute;left:-999px;top:0;background:var(--gold);color:var(--abyss);padding:.6rem 1rem;z-index:99}
+.skip:focus{left:0}
+:focus-visible{outline:3px solid var(--gold);outline-offset:3px;border-radius:4px}
+
+/* ============ SCENES ============ */
+.scene{
+  position:relative; min-height:100vh;
+  display:flex; flex-direction:column; justify-content:center;
+  padding:14vh 8vw; overflow:hidden;
+}
+.copy{position:relative;z-index:3;max-width:34rem}
+.scene h1{font-size:clamp(2.4rem,6vw,4.2rem);line-height:1.1;margin-bottom:1rem;text-wrap:balance}
+.scene h2{font-size:clamp(1.9rem,4.5vw,3.2rem);line-height:1.15;margin-bottom:1rem;text-wrap:balance}
+.scene p.support{font-size:clamp(1rem,1.6vw,1.15rem);max-width:30rem;opacity:.92}
+.transition-line{
+  position:relative;z-index:3;font-family:Inter,Arial,sans-serif;font-size:.85rem;
+  letter-spacing:.18em;text-transform:uppercase;opacity:.6;margin-top:auto;padding-top:8vh;
+}
+.copy-right{margin-left:auto;text-align:right}
+.copy-right p{margin-left:auto}
+
+/* palette arc: each scene owns its water band */
+#underlight{background:linear-gradient(180deg,var(--surface) 0%,var(--seaglass) 45%,var(--teal) 100%)}
+#underlight .copy{color:var(--abyss)}
+#blueroad{background:linear-gradient(180deg,var(--teal),var(--deep) 70%,var(--abyss))}
+#livingwall{background:linear-gradient(180deg,var(--deep) 0%,var(--teal) 55%,var(--deep) 100%)}
+#warmwater{background:linear-gradient(180deg,var(--teal),var(--milky) 60%,var(--deep))}
+#palezone{background:linear-gradient(180deg,var(--milky),#7d949a 50%,var(--deep))}
+#hands{background:linear-gradient(180deg,#5e7f88,var(--deep) 75%,var(--abyss))}
+#wayup{background:linear-gradient(180deg,var(--deep),var(--teal) 55%,var(--seaglass))}
+#air{background:linear-gradient(180deg,var(--surface) 0%,#f7dfb2 45%,var(--seaglass) 100%)}
+#air .copy{color:var(--abyss)}
+
+/* light shafts — one sun, upper left */
+.shafts{position:absolute;inset:0;z-index:1;pointer-events:none;opacity:.5}
+.shafts span{
+  position:absolute;top:-20%;width:14vw;height:150%;
+  background:linear-gradient(180deg,rgba(245,250,248,.32),rgba(245,250,248,0) 75%);
+  transform:rotate(20deg);filter:blur(6px);
+}
+.shafts span:nth-child(1){left:6%} .shafts span:nth-child(2){left:30%;width:9vw;opacity:.7}
+.shafts span:nth-child(3){left:54%;width:6vw;opacity:.5}
+.flat .shafts{opacity:.18;filter:saturate(0)}
+@media (prefers-reduced-motion: no-preference){
+  .shafts span{animation:breathe 12s ease-in-out infinite}
+  .shafts span:nth-child(2){animation-delay:-4s}
+  .shafts span:nth-child(3){animation-delay:-8s}
+  @keyframes breathe{0%,100%{opacity:.85}50%{opacity:.45}}
+}
+
+/* ============ REEF STAGE (placeholder art — same geometry every state) ============ */
+.stage{position:absolute;z-index:2;bottom:0;left:0;right:0;height:52vh;pointer-events:none}
+.stage svg{width:100%;height:100%;display:block}
+/* Health states set custom properties (these inherit into SVG <use> clones reliably) */
+.healthy{--c-antler:var(--coral);--c-dome:var(--amber);--c-fan:var(--violet);
+  --c-plate:var(--seaglass);--c-soft:var(--green);--c-fish:#9fd8d2}
+.threatened{--c-antler:var(--shell);--c-dome:var(--ash);--c-fan:#c6c9c4;
+  --c-plate:var(--shell);--c-soft:var(--ash);--c-fish:var(--ash)}
+.recovery{--c-antler:var(--shell);--c-dome:var(--ash);--c-fan:var(--violet);
+  --c-plate:#bfc7c2;--c-soft:var(--green);--c-fish:#9fd8d2}
+.antler{stroke:var(--c-antler,var(--coral));fill:none;stroke-width:10;stroke-linecap:round}
+.dome{fill:var(--c-dome,var(--amber))}
+.fanc{fill:var(--c-fan,var(--violet))}
+.plate-c{fill:var(--c-plate,var(--seaglass))}
+.soft-c{fill:var(--c-soft,var(--green))}
+.fish{fill:var(--c-fish,#9fd8d2)}
+.terrace{fill:rgba(6,28,45,.55)}
+.fg-sil{fill:var(--abyss);opacity:.85}
+.turtle-s{fill:var(--green)}
+.nursery-line{stroke:var(--gold);stroke-width:2;fill:none}
+.frag{fill:var(--coral)} .frag.v{fill:var(--violet)}
+.tag{fill:var(--gold)}
+.survivor{fill:var(--violet)}
+@media (prefers-reduced-motion: no-preference){
+  .sway{transform-origin:bottom center;animation:sway 8s ease-in-out infinite}
+  @keyframes sway{0%,100%{transform:rotate(-1.5deg)}50%{transform:rotate(1.5deg)}}
+  .glide{animation:glide 26s linear infinite}
+  @keyframes glide{from{transform:translateX(-15vw)}to{transform:translateX(115vw)}}
+}
+
+/* ============ SCENE 4: scroll-driven drain ============ */
+#warmwater .stage{transition:filter .3s linear}
+/* JS sets --drain 0→1 */
+#warmwater .stage{filter:saturate(calc(1 - var(--drain,0)*.7))}
+#warmwater::after{
+  content:"";position:absolute;inset:0;z-index:2;pointer-events:none;
+  background:var(--milky);opacity:calc(var(--drain,0)*.35);
+}
+
+/* ============ SCENE 5: Color Memory ============ */
+.memory-wrap{position:absolute;z-index:2;bottom:0;left:0;right:0;height:52vh}
+.memory-wrap .layer{position:absolute;inset:0}
+.memory-wrap .remembered{
+  -webkit-mask-image:radial-gradient(circle var(--r,0px) at var(--mx,50%) var(--my,50%), #000 55%, transparent 100%);
+          mask-image:radial-gradient(circle var(--r,0px) at var(--mx,50%) var(--my,50%), #000 55%, transparent 100%);
+  transition:-webkit-mask-image .2s, mask-image .2s;
+}
+.memory-hint{font-size:.85rem;letter-spacing:.06em;opacity:.7;margin-top:1.2rem}
+@media (prefers-reduced-motion: reduce){
+  .memory-wrap .remembered{
+    -webkit-mask-image:none;mask-image:none;
+    animation:memcycle 8s ease-in-out infinite alternate;
+  }
+  @keyframes memcycle{from{opacity:0}to{opacity:1}}
+}
+
+/* ============ DEPTH GAUGE ============ */
+.gauge{
+  position:fixed;top:12vh;bottom:12vh;right:clamp(10px,2vw,26px);width:3px;z-index:10;
+  background:rgba(245,250,248,.18);border-radius:2px;
+}
+.gauge .fill{position:absolute;top:0;left:0;width:100%;height:var(--depth,0%);background:var(--white);border-radius:2px;transition:height .15s linear}
+.gauge a{
+  position:absolute;left:50%;width:16px;height:16px;transform:translate(-50%,-50%);
+  border-radius:50%;background:transparent;border:0;display:block;
+}
+.gauge a::after{content:"";position:absolute;inset:5px;border-radius:50%;background:var(--white);opacity:.5}
+.gauge a[data-gold]::after{background:var(--gold);opacity:1}
+.gauge a:hover::after,.gauge a:focus-visible::after{opacity:1;inset:3px}
+
+/* ============ SCROLL CUE ============ */
+.cue{position:absolute;bottom:6vh;left:50%;transform:translateX(-50%);z-index:3;text-align:center;color:inherit}
+.cue small{display:block;font-family:Inter,Arial,sans-serif;font-size:.75rem;letter-spacing:.2em;text-transform:uppercase;opacity:.7;margin-top:.5rem}
+.cue .drop{width:10px;height:10px;border-radius:50%;background:currentColor;margin:0 auto;opacity:.8}
+@media (prefers-reduced-motion: no-preference){
+  .cue .drop{animation:sink 2.5s ease-in infinite}
+  @keyframes sink{0%{transform:translateY(0);opacity:.9}80%{transform:translateY(26px);opacity:0}100%{opacity:0}}
+}
+
+/* ============ CENSUS / TAGS (details) ============ */
+details.census{position:relative;z-index:3;max-width:26rem;margin-top:1.4rem;
+  background:rgba(6,28,45,.82);border-radius:10px;padding:.9rem 1.1rem}
+#underlight details.census,#air details.census{background:rgba(245,250,248,.85);color:var(--abyss)}
+details.census summary{cursor:pointer;font-family:Inter,Arial,sans-serif;font-size:.95rem;font-weight:600}
+details.census p{font-size:.9rem;margin-top:.5rem;opacity:.92}
+
+/* ============ CTAs ============ */
+.cta-nav{position:relative;z-index:3;display:flex;flex-wrap:wrap;gap:1rem;margin-top:2.2rem}
+.cta{
+  flex:1 1 15rem;display:block;text-decoration:none;color:var(--abyss);
+  background:rgba(245,250,248,.92);border-radius:14px;padding:1.3rem 1.4rem;
+  border-top:4px solid var(--card,var(--teal));
+  transition:transform .25s ease, box-shadow .25s ease;
+}
+.cta:hover,.cta:focus-visible{transform:translateY(-4px);box-shadow:0 12px 30px rgba(6,28,45,.25)}
+.cta strong{display:block;font-size:1.15rem;margin-bottom:.35rem;font-family:Georgia,serif}
+.cta span{font-size:.9rem;opacity:.85}
+.cta.learn{--card:var(--seaglass)} .cta.volunteer{--card:var(--gold)} .cta.support{--card:var(--coral)}
+.final-line{position:relative;z-index:3;margin-top:2.5rem;font-size:1.05rem;font-style:italic;opacity:.85}
+
+footer{background:var(--abyss);padding:2.5rem 8vw;font-family:Inter,Arial,sans-serif;font-size:.85rem;opacity:.8}
+.wordmark{position:relative;z-index:3;font-family:Inter,Arial,sans-serif;font-weight:700;letter-spacing:.35em;font-size:.95rem;margin-bottom:4vh}
+@media (max-width:700px){
+  .scene{padding:12vh 7vw}
+  .copy-right{margin-left:0;text-align:left}
+  .stage,.memory-wrap{height:42vh}
+}
+</style>
+</head>
+<body>
+<a class="skip" href="#main">Skip to story</a>
+
+<!-- Depth gauge: progress + skip-nav. Gold tick = the working depth. -->
+<nav class="gauge" aria-label="Dive progress">
+  <div class="fill" aria-hidden="true"></div>
+  <a href="#underlight" style="top:2%" aria-label="Scene 1: The surface"></a>
+  <a href="#blueroad" style="top:16%" aria-label="Scene 2: The descent"></a>
+  <a href="#livingwall" style="top:30%" aria-label="Scene 3: The living reef"></a>
+  <a href="#warmwater" style="top:44%" aria-label="Scene 4: Warming water"></a>
+  <a href="#palezone" style="top:58%" aria-label="Scene 5: The bleached reef"></a>
+  <a href="#hands" style="top:72%" data-gold aria-label="Scene 6: Restoration at the working depth"></a>
+  <a href="#wayup" style="top:86%" aria-label="Scene 7: Recovery"></a>
+  <a href="#air" style="top:98%" aria-label="Scene 8: Resurface and act"></a>
+</nav>
+
+<!-- Shared placeholder reef geometry: THE SAME landmarks in every state.
+     Swap targets: each .stage/.memory-wrap gets replaced by generated art
+     (see ONE_DESCENT_final_plan.md Part C for the matching prompt). -->
+<svg width="0" height="0" aria-hidden="true">
+  <defs>
+    <g id="reef-geometry">
+      <!-- terrace -->
+      <path class="terrace" d="M0,300 Q150,265 320,278 T650,268 T1000,282 L1000,400 L0,400 Z"/>
+      <!-- Landmark A: the Antler (staghorn), left of center -->
+      <g class="sway" style="transform-origin:300px 285px">
+        <path class="antler" d="M300,285 L295,215 L275,175 M295,215 L310,170 M310,170 L302,140 M310,170 L326,145 M275,175 L262,150 M275,175 L285,148 M300,285 L318,225 L338,185 M318,225 L330,195"/>
+      </g>
+      <!-- Landmark B: the Dome (brain coral), right of center -->
+      <g>
+        <ellipse class="dome" cx="640" cy="268" rx="82" ry="52"/>
+        <path d="M575,262 Q600,242 628,258 T700,252" fill="none" stroke="rgba(6,28,45,.35)" stroke-width="4"/>
+        <path d="M585,280 Q615,262 645,276 T705,272" fill="none" stroke="rgba(6,28,45,.35)" stroke-width="4"/>
+      </g>
+      <!-- Landmark C: the Fan, terrace edge -->
+      <g class="sway" style="transform-origin:840px 290px">
+        <path class="fanc" d="M840,290 C800,240 795,190 815,150 C825,185 835,205 840,220 C842,200 848,170 862,148 C866,180 863,210 858,232 C872,210 888,190 905,180 C898,215 880,250 858,272 Z"/>
+      </g>
+      <!-- plate + soft coral accents -->
+      <ellipse class="plate-c" cx="460" cy="280" rx="55" ry="14"/>
+      <g class="soft-cg">
+        <rect class="soft-c" x="150" y="245" width="10" height="42" rx="5"/>
+        <rect class="soft-c" x="167" y="235" width="10" height="52" rx="5"/>
+        <rect class="soft-c" x="184" y="250" width="10" height="38" rx="5"/>
+      </g>
+    </g>
+    <g id="school">
+      <ellipse class="fish" cx="0" cy="0" rx="14" ry="5"/>
+      <ellipse class="fish" cx="30" cy="-12" rx="12" ry="4.5"/>
+      <ellipse class="fish" cx="55" cy="4" rx="13" ry="5"/>
+      <ellipse class="fish" cx="82" cy="-8" rx="11" ry="4"/>
+      <ellipse class="fish" cx="24" cy="14" rx="12" ry="4.5"/>
+      <ellipse class="fish" cx="60" cy="-22" rx="10" ry="4"/>
+    </g>
+    <g id="turtle">
+      <ellipse class="turtle-s" cx="0" cy="0" rx="26" ry="15"/>
+      <ellipse class="turtle-s" cx="24" cy="-3" rx="9" ry="6"/>
+      <ellipse class="turtle-s" cx="-18" cy="10" rx="10" ry="4"/>
+      <ellipse class="turtle-s" cx="14" cy="12" rx="10" ry="4"/>
+    </g>
+  </defs>
+</svg>
+
+<main id="main">
+
+<!-- ================= SCENE 1 ================= -->
+<header class="scene" id="underlight" aria-label="Scene 1 of 8: Underlight — the surface from below">
+  <div class="shafts" aria-hidden="true"><span></span><span></span><span></span></div>
+  <div class="copy">
+    <p class="wordmark">R E E F</p>
+    <h1>Take a breath.</h1>
+    <p class="support">Below this surface, a quarter of all ocean life depends on one living structure. Scroll to descend.</p>
+  </div>
+  <div class="cue" aria-hidden="true"><div class="drop"></div><small>Scroll to descend</small></div>
+</header>
+
+<!-- ================= SCENE 2 ================= -->
+<section class="scene" id="blueroad" aria-label="Scene 2 of 8: The Blue Road — open-water descent">
+  <div class="shafts" aria-hidden="true"><span></span><span></span><span></span></div>
+  <svg class="stage" viewBox="0 0 1000 400" preserveAspectRatio="xMidYMax slice" role="img"
+       aria-label="Open blue water. A school of small fish crosses the middle distance; a dark reef wall emerges from the haze below.">
+    <use href="#school" x="700" y="120" class="glide"/>
+    <use href="#turtle" x="200" y="220"/>
+    <path class="fg-sil" d="M1000,400 L1000,300 Q940,320 900,360 L860,400 Z" opacity=".5"/>
+  </svg>
+  <div class="copy">
+    <h2>The light thins. The story doesn&rsquo;t.</h2>
+    <p class="support">Every ten meters down, the ocean keeps more of its secrets. The reef holds most of them.</p>
+  </div>
+  <p class="transition-line">There. On the wall.</p>
+</section>
+
+<!-- ================= SCENE 3 ================= -->
+<section class="scene healthy" id="livingwall" aria-label="Scene 3 of 8: The Living Wall — the healthy reef">
+  <div class="shafts" aria-hidden="true"><span></span><span></span><span></span></div>
+  <svg class="stage" viewBox="0 0 1000 400" preserveAspectRatio="xMidYMax slice" role="img"
+       aria-label="A sunlit coral terrace in full color: a tall coral-pink staghorn stand, a broad ochre brain-coral dome, and a violet sea fan, with a fish school weaving between them and a sea turtle gliding above.">
+    <use href="#reef-geometry"/>
+    <use href="#school" x="380" y="150" class="glide"/>
+    <use href="#turtle" x="120" y="90"/>
+  </svg>
+  <div class="copy copy-right">
+    <h2>Meet the city that builds itself.</h2>
+    <p class="support">Coral is an animal, a builder, and a landlord to thousands. It has been growing this wall for four hundred years.</p>
+    <details class="census">
+      <summary>The Antler — staghorn coral</summary>
+      <p>An animal colony, not a plant. Its branches grow up to 10&nbsp;cm a year and shelter juvenile fish by the hundred.</p>
+    </details>
+    <details class="census">
+      <summary>The Dome — brain coral</summary>
+      <p>Centuries old and slow-growing. One dome can outlive every human who ever swims past it — if the water lets it.</p>
+    </details>
+    <details class="census">
+      <summary>The Fan — gorgonian sea fan</summary>
+      <p>It faces the current to feed, filtering plankton with a living lace older than most trees on shore.</p>
+    </details>
+  </div>
+  <p class="transition-line">Follow the turtle. Notice the water.</p>
+</section>
+
+<!-- ================= SCENE 4 ================= -->
+<section class="scene healthy" id="warmwater" aria-label="Scene 4 of 8: Warm Water — the change begins">
+  <div class="shafts" aria-hidden="true"><span></span><span></span><span></span></div>
+  <svg class="stage" viewBox="0 0 1000 400" preserveAspectRatio="xMidYMax slice" role="img"
+       aria-label="The same reef wall, hazier and quieter: fewer fish, milky water, the warmth draining from the light.">
+    <use href="#reef-geometry"/>
+    <use href="#school" x="820" y="60"/>
+  </svg>
+  <div class="copy">
+    <h2>The water is changing.</h2>
+    <p class="support">A few degrees of sustained heat, and coral expels the algae that feed and color it. What&rsquo;s left is white — alive, but starving.</p>
+  </div>
+  <p class="transition-line">This is the same reef.</p>
+</section>
+
+<!-- ================= SCENE 5 ================= -->
+<section class="scene flat" id="palezone" aria-label="Scene 5 of 8: The Pale Zone — the bleached reef">
+  <div class="shafts" aria-hidden="true"><span></span><span></span><span></span></div>
+
+  <!-- Color Memory: bleached layer over remembered (healthy) layer, revealed under the pointer -->
+  <div class="memory-wrap" id="memory"
+       role="img" aria-label="The same coral terrace, now chalk-white after bleaching. One small violet patch survives. Touch the coral and its former color blooms briefly, then fades.">
+    <svg class="layer threatened" viewBox="0 0 1000 400" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+      <use href="#reef-geometry"/>
+      <circle class="survivor" cx="905" cy="292" r="16"/>
+      <use href="#school" x="480" y="140" opacity=".35"/>
+    </svg>
+    <svg class="layer remembered healthy" viewBox="0 0 1000 400" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
+      <use href="#reef-geometry"/>
+      <circle class="survivor" cx="905" cy="292" r="16"/>
+    </svg>
+  </div>
+
+  <div class="copy">
+    <h2>When heat stays, color leaves.</h2>
+    <p class="support">This coral is not dead. It is holding on — and it can come back, if the water lets it.</p>
+    <p class="memory-hint" id="memory-hint">Touch the coral. It remembers.</p>
+  </div>
+  <p class="transition-line">Look down. Someone&rsquo;s here.</p>
+</section>
+
+<!-- ================= SCENE 6 ================= -->
+<section class="scene recovery" id="hands" aria-label="Scene 6 of 8: Hands — restoration at the working depth">
+  <div class="shafts" aria-hidden="true"><span></span><span></span><span></span></div>
+  <svg class="stage" viewBox="0 0 1000 400" preserveAspectRatio="xMidYMax slice" role="img"
+       aria-label="The grey slope strung with rope nursery lines. Small saturated coral fragments grow in tidy rows, marked with gold tags. Bubbles rise from divers working calmly.">
+    <use href="#reef-geometry"/>
+    <path class="nursery-line" d="M180,180 L520,168"/>
+    <path class="nursery-line" d="M180,215 L520,205"/>
+    <circle class="frag" cx="240" cy="177" r="8"/><circle class="frag v" cx="310" cy="174" r="8"/>
+    <circle class="frag" cx="380" cy="172" r="8"/><circle class="frag v" cx="450" cy="170" r="8"/>
+    <circle class="frag v" cx="245" cy="213" r="8"/><circle class="frag" cx="330" cy="210" r="8"/>
+    <circle class="frag" cx="420" cy="208" r="8"/>
+    <rect class="tag" x="266" y="168" width="12" height="16" rx="2"/>
+    <rect class="tag" x="402" y="163" width="12" height="16" rx="2"/>
+    <circle class="survivor" cx="905" cy="292" r="18"/>
+  </svg>
+  <div class="copy copy-right">
+    <h2>Recovery isn&rsquo;t a miracle. It&rsquo;s a method.</h2>
+    <p class="support">Fragments of surviving coral, grown on lines, planted back by hand. REEF volunteers have done this ten thousand times.</p>
+    <details class="census">
+      <summary>Tag 041 — staghorn fragment</summary>
+      <p>Planted 14 months ago from the survivor patch. Now 9&nbsp;cm and hosting its first damselfish.</p>
+    </details>
+    <details class="census">
+      <summary>Tag 117 — soft coral fragment</summary>
+      <p>Planted this season. Checked, measured, and photographed by a volunteer every six weeks.</p>
+    </details>
+  </div>
+  <p class="transition-line">Now watch what ten years can do.</p>
+</section>
+
+<!-- ================= SCENE 7 ================= -->
+<section class="scene healthy" id="wayup" aria-label="Scene 7 of 8: The Way Up — recovery over time">
+  <div class="shafts" aria-hidden="true"><span></span><span></span><span></span></div>
+  <svg class="stage" viewBox="0 0 1000 400" preserveAspectRatio="xMidYMax slice" role="img"
+       aria-label="Rising past restored terraces: color returning zone by zone, the fish school larger than before, nursery lines disappearing inside living reef.">
+    <use href="#reef-geometry"/>
+    <use href="#school" x="300" y="130" class="glide"/>
+    <use href="#school" x="600" y="90" class="glide" style="animation-delay:-9s"/>
+  </svg>
+  <div class="copy">
+    <h2>Given hands and time, it comes back.</h2>
+    <p class="support">Reefs replanted a decade ago now spawn on their own. Recovery scales exactly as far as we do.</p>
+  </div>
+  <p class="transition-line">Almost up. Don&rsquo;t forget.</p>
+</section>
+
+<!-- ================= SCENE 8 ================= -->
+<section class="scene" id="air" aria-label="Scene 8 of 8: Air — resurface and choose">
+  <div class="copy" style="max-width:44rem">
+    <h2>Come up ready.</h2>
+    <p class="support">You&rsquo;ve seen what&rsquo;s down there — what it was, what it can be. Choose how you return.</p>
+    <nav class="cta-nav" aria-label="Take action">
+      <a class="cta learn" href="#mission">
+        <strong>Learn the mission</strong>
+        <span>See how REEF works. Five minutes, no signup.</span>
+      </a>
+      <a class="cta volunteer" href="#volunteer">
+        <strong>Volunteer</strong>
+        <span>Train with us. Dive with us. Plant coral with your own hands.</span>
+      </a>
+      <a class="cta support" href="#support">
+        <strong>Support the work</strong>
+        <span>One fragment costs less than lunch. Fund a line, follow its growth.</span>
+      </a>
+    </nav>
+    <p class="final-line">The reef doesn&rsquo;t need everyone. It needs enough of us. Be one.</p>
+  </div>
+</section>
+</main>
+
+<footer>
+  <p>REEF — a fictional environmental organization protecting coral reefs and marine ecosystems. ONE DESCENT concept site.</p>
+</footer>
+
+<script>
+/* Progressive enhancement only — the page is complete without any of this. */
+(function(){
+  var reduced = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* Depth gauge fill */
+  var fill = document.querySelector('.gauge .fill');
+  function onScroll(){
+    var d = document.documentElement;
+    var p = d.scrollTop / (d.scrollHeight - d.clientHeight) * 100;
+    fill.style.setProperty('--depth', p + '%');
+    fill.style.height = p + '%';
+    drain();
+  }
+
+  /* Scene 4: scroll-driven color drain (saturation leaves under your thumb) */
+  var warm = document.getElementById('warmwater');
+  function drain(){
+    var r = warm.getBoundingClientRect();
+    var vh = innerHeight;
+    /* 0 when scene top enters, 1 when scene bottom reaches viewport top */
+    var t = Math.min(1, Math.max(0, (vh - r.top) / (r.height + vh) * 1.6));
+    warm.style.setProperty('--drain', t.toFixed(3));
+  }
+  addEventListener('scroll', onScroll, {passive:true});
+  onScroll();
+
+  /* Scene 5: Color Memory — remembered color blooms under pointer/finger, then fades */
+  if (!reduced){
+    var wrap = document.getElementById('memory');
+    var mem = wrap.querySelector('.remembered');
+    var fadeTimer = null, r = 0, target = 0, raf = null;
+
+    function setMask(x, y){
+      var b = wrap.getBoundingClientRect();
+      mem.style.setProperty('--mx', ((x - b.left)/b.width*100).toFixed(1) + '%');
+      mem.style.setProperty('--my', ((y - b.top)/b.height*100).toFixed(1) + '%');
+    }
+    function animate(){
+      r += (target - r) * 0.12;
+      mem.style.setProperty('--r', r.toFixed(1) + 'px');
+      if (Math.abs(target - r) > 0.5){ raf = requestAnimationFrame(animate); } else { raf = null; }
+    }
+    function bloom(x, y){
+      setMask(x, y);
+      target = Math.min(180, innerWidth * 0.16);
+      clearTimeout(fadeTimer);
+      fadeTimer = setTimeout(function(){ target = 0; if(!raf) animate(); }, 2000);
+      if(!raf) animate();
+      var hint = document.getElementById('memory-hint');
+      if (hint) hint.style.opacity = '.35';
+    }
+    wrap.style.pointerEvents = 'auto';
+    wrap.addEventListener('pointermove', function(e){ if(target>0) setMask(e.clientX, e.clientY); });
+    wrap.addEventListener('pointerdown', function(e){ bloom(e.clientX, e.clientY); });
+    wrap.addEventListener('pointerenter', function(e){ bloom(e.clientX, e.clientY); });
+  }
+})();
+</script>
+</body>
+</html>
