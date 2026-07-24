@@ -69,10 +69,16 @@ Done:
   scroll-scrubbed reef stage (GSAP + ScrollTrigger) on wide desktops; the
   accessible static scenes remain the fallback on mobile, narrow tablet,
   reduced-motion, or when JavaScript is unavailable
+- Color Memory — a soft radial reveal that remembers the reef's lost colour
+  during the Pale Zone: a CSS-masked healthy overlay follows the pointer over
+  the aligned bleached geometry (one rAF, no per-frame React state), with a
+  native "Remember colour" button for a restrained full-frame comparison. The
+  pointer reveal is desktop-only; mobile and reduced-motion get the same
+  button-toggled comparison as an accessible static equivalent
 
 Planned but not yet built:
 
-- Color Memory interaction and organism hotspots
+- Organism hotspots (per-species reef annotations)
 - Advanced interaction polish, custom cursor, page transitions, audio
 - Deployment
 

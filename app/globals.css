@@ -166,4 +166,63 @@
   .atlas-stage {
     perspective: 1200px;
   }
+
+  /* Hands chapter: every step title stays listed, but only the active step
+     opens its body, so the enhanced desktop panel reads as one method. */
+  .atlas-step {
+    opacity: 0.35;
+    transition: opacity 0.4s ease;
+  }
+  .atlas-step[data-active="true"] {
+    opacity: 1;
+  }
+  .atlas-step-body {
+    display: none;
+  }
+  .atlas-step[data-active="true"] .atlas-step-body {
+    display: block;
+  }
+
+  /* Color Memory — a soft radial reveal of the aligned healthy reef under the
+     pointer during the Pale Zone. Opacity is driven inline (asymmetric fades);
+     the pointer position rides CSS custom properties updated in one rAF. */
+  .color-memory-layer {
+    --memory-x: 50%;
+    --memory-y: 45%;
+    --memory-inner: 105px;
+    --memory-outer: 215px;
+    opacity: 0;
+    -webkit-mask-image: radial-gradient(
+      circle var(--memory-outer) at var(--memory-x) var(--memory-y),
+      #000 0,
+      #000 var(--memory-inner),
+      transparent 100%
+    );
+    mask-image: radial-gradient(
+      circle var(--memory-outer) at var(--memory-x) var(--memory-y),
+      #000 0,
+      #000 var(--memory-inner),
+      transparent 100%
+    );
+  }
+  /* Full-frame keyboard comparison: drop the mask, hold a restrained opacity —
+     the reef is remembered, not restored to a thriving Living Wall. */
+  .color-memory-layer[data-remember="true"] {
+    -webkit-mask-image: none;
+    mask-image: none;
+    opacity: 0.62;
+  }
+  /* Where CSS masks are unsupported, never show a rectangular healthy image —
+     hide the pointer layer; the native button comparison still works. */
+  @supports not (
+    (-webkit-mask-image: radial-gradient(#000, #000)) or
+      (mask-image: radial-gradient(#000, #000))
+  ) {
+    .color-memory-layer:not([data-remember="true"]) {
+      display: none;
+    }
+  }
+  .color-memory-hint {
+    color: rgba(245, 250, 248, 0.6);
+  }
 }

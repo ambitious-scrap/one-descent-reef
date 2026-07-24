@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { SceneShell } from "./StoryScene";
 import { ReefAnchor } from "./ReefAnchor";
 import { ArtLayer } from "./ArtLayer";
+import { ColorMemory } from "./ColorMemory";
 import type { StoryMoment } from "@/content/story";
 import { restorationMethod } from "@/content/story";
 
@@ -48,6 +49,12 @@ export function LivingReefAtlas({ moments }: { moments: StoryMoment[] }) {
   const rootRef = useRef<HTMLDivElement>(null);
   const staticRef = useRef<HTMLDivElement>(null);
   const enhancedRef = useRef<HTMLDivElement>(null);
+  const stageRef = useRef<HTMLDivElement>(null);
+  // Color Memory only lives during the Pale Zone; both flags flip rarely
+  // (chapter crossings and a button press), never per animation frame.
+  const [paleActive, setPaleActive] = useState(false);
+  const [remember, setRemember] = useState(false);
+  const paleRef = useRef(false);
 
   useEffect(() => {
     const staticEl = staticRef.current;
@@ -95,6 +102,16 @@ export function LivingReefAtlas({ moments }: { moments: StoryMoment[] }) {
           gsap.set(panels, { opacity: 0, yPercent: 4 });
           gsap.set(panels[0], { opacity: 1, yPercent: 0 });
 
+          // Only the active chapter panel is announced + focusable.
+          const setPanelActive = (chapter: number) =>
+            panels.forEach((el, i) => {
+              const on = i === chapter;
+              el.setAttribute("aria-hidden", String(!on));
+              if (on) el.removeAttribute("inert");
+              else el.setAttribute("inert", "");
+            });
+          setPanelActive(0);
+
           let lastChapter = -1;
 
           const tl = gsap.timeline({
@@ -111,6 +128,7 @@ export function LivingReefAtlas({ moments }: { moments: StoryMoment[] }) {
                   rail.forEach((el, i) =>
                     el.setAttribute("data-active", String(i === chapter)),
                   );
+                  setPanelActive(chapter);
                   // Paper-sheet gesture: one restrained field-note turn per chapter.
                   gsap.fromTo(
                     sheet,
@@ -132,19 +150,28 @@ export function LivingReefAtlas({ moments }: { moments: StoryMoment[] }) {
                 steps.forEach((el, i) =>
                   el.setAttribute("data-active", String(cf > 2.5 && i === stepIdx)),
                 );
+                // Color Memory: alive only across the central Pale Zone band.
+                const inPale = cf > 1.55 && cf < 2.45;
+                if (inPale !== paleRef.current) {
+                  paleRef.current = inPale;
+                  setPaleActive(inPale);
+                  if (!inPale) setRemember(false); // reset the keyboard toggle
+                }
               },
             },
           });
 
-          // Continuous, restrained parallax across the whole sequence.
-          tl.to(anchorStack, { scale: 1.02, duration: 4 }, 0);
+          // Continuous, restrained parallax across the whole sequence. The
+          // Color Memory overlay rides the same scale so its healthy reef stays
+          // pixel-aligned with the bleached base beneath it.
+          tl.to([...anchorStack, ...q(".atlas-cm")], { scale: 1.02, duration: 4 }, 0);
           tl.to(seafanH, { yPercent: -6, duration: 4 }, 0);
 
           // 0 → 1  Warm Water: heat blends in, colour drains.
-          tl.to(bleached, { opacity: 0.4 }, 0)
+          tl.to(bleached, { opacity: 0.42 }, 0)
             .to(warmVeil, { opacity: 1 }, 0)
-            .to(schoolH, { opacity: 0.15 }, 0)
-            .to(light, { opacity: 0.25 }, 0)
+            .to(schoolH, { opacity: 0.12 }, 0)
+            .to(light, { opacity: 0.18 }, 0)
             .to(panels[0], { opacity: 0, yPercent: -4 }, 0)
             .to(panels[1], { opacity: 1, yPercent: 0 }, 0.15);
 
@@ -205,7 +232,10 @@ export function LivingReefAtlas({ moments }: { moments: StoryMoment[] }) {
       {/* Enhanced pinned stage — hidden until JS enables it; decorative visuals,
           real chapter copy carried in the panels. */}
       <div ref={enhancedRef} hidden className="atlas-enhanced relative h-[500vh]">
-        <div className="atlas-stage sticky top-0 h-screen w-full overflow-hidden bg-abyss">
+        <div
+          ref={stageRef}
+          className="atlas-stage sticky top-0 h-screen w-full overflow-hidden bg-abyss"
+        >
           {/* Reef geography — the same terrace across every state. */}
           <div className="atlas-anchors absolute inset-0 will-change-transform">
             <div className="atlas-healthy absolute inset-0">
@@ -228,8 +258,14 @@ export function LivingReefAtlas({ moments }: { moments: StoryMoment[] }) {
             src={PARTICLES}
             className="atlas-particles inset-0 h-full w-full object-cover mix-blend-screen art-screen"
           />
-          <div className="atlas-warm absolute inset-0 bg-gradient-to-b from-amber/25 via-transparent to-abyss/30" />
+          {/* Warm Water: heat pooling at the upper-left light, colour draining —
+              visibly warmer than the Living Wall, not yet the pale bleach. */}
+          <div className="atlas-warm absolute inset-0 bg-[radial-gradient(130%_90%_at_22%_-8%,rgba(242,168,92,0.44),transparent_56%),linear-gradient(180deg,rgba(236,148,68,0.22),transparent_48%,rgba(6,28,45,0.36))]" />
           <div className="atlas-cool absolute inset-0 bg-milky/15" />
+
+          {/* Color Memory — masked healthy overlay above the bleached anchor,
+              below the pale-zone fauna, text, and chapter rail. */}
+          <ColorMemory stageRef={stageRef} active={paleActive} remember={remember} />
 
           {/* Selective fauna / foreground (turtle layers intentionally omitted —
               the anchor paintings already carry a turtle). */}
@@ -288,12 +324,14 @@ export function LivingReefAtlas({ moments }: { moments: StoryMoment[] }) {
                   </h2>
                   <p className="mt-4 text-lg text-paper/95">{m.support}</p>
                   {m.id === "hands" ? (
+                    // Titles stay listed; only the active step opens its body,
+                    // so the chapter reads as one method, not four at once.
                     <ol className="mt-6 space-y-3 text-left">
                       {restorationMethod.map((step) => (
                         <li
                           key={step.n}
                           data-active="false"
-                          className="atlas-step flex gap-3 opacity-60 transition-opacity data-[active=true]:opacity-100"
+                          className="atlas-step flex gap-3"
                         >
                           <span className="font-serif text-xl tabular-nums text-gold">
                             {step.n}
@@ -302,13 +340,28 @@ export function LivingReefAtlas({ moments }: { moments: StoryMoment[] }) {
                             <h3 className="font-serif text-base leading-snug">
                               {step.title}
                             </h3>
-                            <p className="mt-0.5 font-sans text-sm text-paper/85">
+                            <p className="atlas-step-body mt-0.5 font-sans text-sm text-paper/85">
                               {step.body}
                             </p>
                           </div>
                         </li>
                       ))}
                     </ol>
+                  ) : null}
+                  {m.id === "pale-zone" && paleActive ? (
+                    <div className="color-memory mt-6">
+                      <button
+                        type="button"
+                        aria-pressed={remember}
+                        onClick={() => setRemember((v) => !v)}
+                        className="color-memory-control inline-flex min-h-11 items-center rounded-md border border-white/25 bg-abyss/50 px-4 py-2 font-sans text-sm font-semibold uppercase tracking-[0.12em] text-paper transition-colors hover:bg-abyss/70"
+                      >
+                        {remember ? "Return to pale" : "Remember colour"}
+                      </button>
+                      <p className="color-memory-hint mt-2 font-sans text-xs uppercase tracking-[0.14em]">
+                        Move through the reef to remember its colour.
+                      </p>
+                    </div>
                   ) : null}
                 </div>
               ))}
@@ -355,27 +408,15 @@ function StaticScenes({ moments }: { moments: StoryMoment[] }) {
         art={
           <>
             <ReefAnchor state="healthy" />
-            <ReefAnchor state="bleached" className="opacity-40" />
-            <div className="absolute inset-0 bg-gradient-to-b from-amber/15 via-transparent to-abyss/25" />
+            <ReefAnchor state="bleached" className="opacity-45" />
+            {/* Heat pooling at the upper-left light — warmer than the Living Wall. */}
+            <div className="absolute inset-0 bg-[radial-gradient(130%_90%_at_22%_-8%,rgba(242,168,92,0.44),transparent_56%),linear-gradient(180deg,rgba(236,148,68,0.22),transparent_48%,rgba(6,28,45,0.34))]" />
             <ArtLayer src={PARTICLES} className={`${screen} opacity-20`} />
             <Scrims />
           </>
         }
       />
-      <SceneShell
-        moment={m["pale-zone"]}
-        sectionClass="min-h-[84svh] items-stretch md:min-h-[88vh]"
-        contentClass={REVEAL_CONTENT}
-        panelClass={REVEAL_PANEL}
-        art={
-          <>
-            <ReefAnchor state="bleached" />
-            <div className="absolute inset-0 bg-milky/10" />
-            <ArtLayer src={PARTICLES} className={`${screen} opacity-10`} />
-            <Scrims />
-          </>
-        }
-      />
+      <StaticPaleScene moment={m["pale-zone"]} />
       <SceneShell
         moment={m.hands}
         sectionClass="min-h-[86svh] items-stretch md:min-h-[92vh]"
@@ -417,5 +458,56 @@ function StaticScenes({ moments }: { moments: StoryMoment[] }) {
         }
       />
     </>
+  );
+}
+
+/**
+ * Static Pale Zone with an accessible Color Memory comparison — the equivalent
+ * for mobile, narrow, and reduced-motion (where the pinned Atlas never mounts).
+ * The bleached reef is the base; a native button toggles a restrained full-frame
+ * healthy overlay over the same geography. No drag, no pointer-following mask, no
+ * scroll interception. Reduced motion collapses the crossfade to an instant swap
+ * via the global reduced-motion rule.
+ */
+function StaticPaleScene({ moment }: { moment: StoryMoment }) {
+  const [remembered, setRemembered] = useState(false);
+  const screen = "inset-0 h-full w-full object-cover mix-blend-screen art-screen";
+
+  return (
+    <SceneShell
+      moment={moment}
+      sectionClass="min-h-[84svh] items-stretch md:min-h-[88vh]"
+      contentClass="items-start justify-center md:items-center md:justify-end"
+      panelClass="md:ml-auto"
+      art={
+        <>
+          <ReefAnchor state="bleached" />
+          <div
+            className="absolute inset-0 transition-opacity duration-500"
+            style={{ opacity: remembered ? 0.62 : 0 }}
+            aria-hidden="true"
+          >
+            <ReefAnchor state="healthy" />
+          </div>
+          <div className="absolute inset-0 bg-milky/10" />
+          <ArtLayer src={PARTICLES} className={`${screen} opacity-10`} />
+          <Scrims />
+        </>
+      }
+    >
+      <div className="color-memory mt-8">
+        <button
+          type="button"
+          aria-pressed={remembered}
+          onClick={() => setRemembered((v) => !v)}
+          className="color-memory-control inline-flex min-h-11 items-center rounded-md border border-white/25 bg-abyss/50 px-4 py-2 font-sans text-sm font-semibold uppercase tracking-[0.12em] text-paper transition-colors hover:bg-abyss/70"
+        >
+          {remembered ? "Return to pale" : "Remember colour"}
+        </button>
+        <p className="color-memory-hint mt-2 font-sans text-xs uppercase tracking-[0.14em]">
+          Use Remember colour to compare this reef.
+        </p>
+      </div>
+    </SceneShell>
   );
 }
