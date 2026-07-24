@@ -61,10 +61,17 @@ Done:
 - Simulated conservation-support flow (frequency, suggested or custom rupee
   amount, focus area, summary → confirm with edit/back, accessible success
   state — no payment processing and no financial details collected)
+- Cinematic open-water video loops (Underlight, Blue Road, Air) via a lazy,
+  silent `AmbientVideo` component: IntersectionObserver activation, offscreen
+  and hidden-tab pausing, poster-fade loop-seam masking, and a poster-only
+  fallback under reduced motion or video failure
+- Living Reef Atlas — Scenes 3–7 progressively enhanced into one pinned,
+  scroll-scrubbed reef stage (GSAP + ScrollTrigger) on wide desktops; the
+  accessible static scenes remain the fallback on mobile, narrow tablet,
+  reduced-motion, or when JavaScript is unavailable
 
 Planned but not yet built:
 
-- GSAP / ScrollTrigger scroll choreography
 - Color Memory interaction and organism hotspots
 - Advanced interaction polish, custom cursor, page transitions, audio
 - Deployment

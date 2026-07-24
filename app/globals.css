@@ -148,3 +148,22 @@
     @apply h-5 w-5 shrink-0 accent-gold;
   }
 }
+
+@layer components {
+  /* Living Reef Atlas — decorative chapter rail. Quiet by default, gold when
+     active; the active chapter is also conveyed by the visible chapter copy. */
+  .atlas-rail-item {
+    color: rgba(245, 250, 248, 0.45);
+    text-shadow: 0 1px 10px rgba(6, 28, 45, 0.7);
+    transition:
+      color 0.35s ease,
+      opacity 0.35s ease;
+  }
+  .atlas-rail-item[data-active="true"] {
+    color: theme("colors.gold");
+  }
+  /* Perspective so the paper-sheet field-note gesture reads as a slight turn. */
+  .atlas-stage {
+    perspective: 1200px;
+  }
+}

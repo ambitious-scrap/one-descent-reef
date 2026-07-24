@@ -1,25 +1,11 @@
 import Link from "next/link";
 import { SceneShell } from "./StoryScene";
-import { ReefAnchor } from "./ReefAnchor";
-import { ArtLayer } from "./ArtLayer";
-import {
-  storyMoments,
-  finalActions,
-  finalLine,
-  restorationMethod,
-} from "@/content/story";
+import { AmbientVideo } from "@/components/media/AmbientVideo";
+import { LivingReefAtlas } from "./LivingReefAtlas";
+import { storyMoments, finalActions, finalLine } from "@/content/story";
 
-const OVERLAY = "/images/reef/overlays";
-const LAYER = "/images/reef/layers";
-
-const LIGHT = `${OVERLAY}/overlay-lightshafts-healthy-black.png`;
-const PARTICLES = `${OVERLAY}/overlay-particles-healthy-black.png`;
-const SEAFAN = `${LAYER}/foreground/layer-seafan-foreground-healthy.png`;
-
-const FADE_UP =
-  "linear-gradient(to top, #000 0%, transparent 55%)";
-const FADE_UP_LOW =
-  "linear-gradient(to top, #000 0%, #000 20%, transparent 60%)";
+const VID = "/videos/open-water";
+const POSTER = "/images/reef/open-water/posters";
 
 const accentBorder: Record<string, string> = {
   seaglass: "border-t-seaglass",
@@ -27,195 +13,75 @@ const accentBorder: Record<string, string> = {
   coral: "border-t-coral",
 };
 
-/** Screen-blended atmospheric overlays (black backgrounds drop out). */
-function Light({ className = "" }: { className?: string }) {
-  return (
-    <ArtLayer
-      src={LIGHT}
-      className={`inset-0 h-full w-full object-cover mix-blend-screen art-screen ${className}`}
-    />
-  );
-}
-function Particles({ className = "" }: { className?: string }) {
-  return (
-    <ArtLayer
-      src={PARTICLES}
-      className={`inset-0 h-full w-full object-cover mix-blend-screen art-screen ${className}`}
-    />
-  );
-}
-
-/** Text-safe scrims: top on narrow (open water above the reef),
-    right on wide (open water beside the reef). */
-function ReefScrims() {
-  return (
-    <>
-      <div className="absolute inset-0 scrim-t md:hidden" />
-      <div className="absolute inset-0 hidden scrim-r md:block" />
-    </>
-  );
-}
-
-// Reef reveal scenes: copy at top on mobile, floated right on desktop.
-const REVEAL_CONTENT =
-  "items-start justify-center md:items-center md:justify-end";
-const REVEAL_PANEL = "md:ml-auto";
-
 export function StoryJourney() {
   const m = Object.fromEntries(
     storyMoments.map((s) => [s.id, s]),
   ) as Record<string, (typeof storyMoments)[number]>;
 
+  // Scenes 3–7 form the Living Reef Atlas.
+  const atlasMoments = storyMoments.filter((s) =>
+    ["living-wall", "warm-water", "pale-zone", "hands", "way-up"].includes(s.id),
+  );
+
   return (
     <div>
-      {/* 01 — Underlight: open water, the descent begins; no full reef yet. */}
+      {/* 01 — Underlight: open-water video, the descent begins; no reef yet. */}
       <SceneShell
         moment={m.underlight}
-        sectionClass="min-h-[80svh] items-end bg-gradient-to-b from-teal via-deep to-abyss md:min-h-[88vh]"
+        sectionClass="min-h-[80svh] items-end md:min-h-[88vh]"
         contentClass="items-end"
         art={
           <>
-            <Light className="opacity-50" />
-            <Particles className="opacity-35" />
+            <AmbientVideo
+              webmSrc={`${VID}/underlight.webm`}
+              mp4Src={`${VID}/underlight.mp4`}
+              posterSrc={`${POSTER}/underlight-poster.png`}
+              seamFadeStart={6.55}
+              eager
+              objectPosition="center"
+            />
             <div className="absolute inset-0 scrim-b" />
           </>
         }
       />
 
-      {/* 02 — The Blue Road: deeper, cooler; the reef only a distant silhouette. */}
+      {/* 02 — The Blue Road: distant-reveal video; no reef anchor over the clip. */}
       <SceneShell
         moment={m["blue-road"]}
-        sectionClass="min-h-[66svh] items-center bg-gradient-to-b from-deep via-abyss to-abyss md:min-h-[72vh]"
+        sectionClass="min-h-[66svh] items-center md:min-h-[72vh]"
         contentClass="items-center"
         art={
           <>
-            <ReefAnchor
-              state="healthy"
-              className="opacity-20 blur-[2px] saturate-50"
-              style={{ maskImage: FADE_UP, WebkitMaskImage: FADE_UP }}
+            <AmbientVideo
+              webmSrc={`${VID}/blue-road.webm`}
+              mp4Src={`${VID}/blue-road.mp4`}
+              posterSrc={`${POSTER}/blue-road-poster.png`}
+              seamFadeStart={6.35}
+              objectPosition="center"
             />
-            <Particles className="opacity-25" />
             <div className="absolute inset-0 scrim-veil" />
           </>
         }
       />
 
-      {/* 03 — The Living Wall: first full, colourful reveal. */}
-      <SceneShell
-        moment={m["living-wall"]}
-        sectionClass="min-h-[86svh] items-stretch md:min-h-[94vh]"
-        contentClass={REVEAL_CONTENT}
-        panelClass={REVEAL_PANEL}
-        art={
-          <>
-            <ReefAnchor state="healthy" />
-            <Light className="opacity-40" />
-            <Particles className="opacity-30" />
-            <ArtLayer
-              src={SEAFAN}
-              className="-left-10 bottom-[-4%] w-36 opacity-90 sm:w-52 md:w-72"
-            />
-            <ReefScrims />
-          </>
-        }
-      />
+      {/* 03–07 — Living Reef Atlas: static scenes, pinned+scrubbed on desktop. */}
+      <LivingReefAtlas moments={atlasMoments} />
 
-      {/* 04 — Warm Water: same geography, healthy under a ~40% bleached blend. */}
-      <SceneShell
-        moment={m["warm-water"]}
-        sectionClass="min-h-[84svh] items-stretch md:min-h-[90vh]"
-        contentClass={REVEAL_CONTENT}
-        panelClass={REVEAL_PANEL}
-        art={
-          <>
-            <ReefAnchor state="healthy" />
-            <ReefAnchor state="bleached" className="opacity-40" />
-            <div className="absolute inset-0 bg-gradient-to-b from-amber/15 via-transparent to-abyss/25" />
-            <Particles className="opacity-20" />
-            <ReefScrims />
-          </>
-        }
-      />
-
-      {/* 05 — The Pale Zone: bleached, quiet, no golden light. */}
-      <SceneShell
-        moment={m["pale-zone"]}
-        sectionClass="min-h-[84svh] items-stretch md:min-h-[88vh]"
-        contentClass={REVEAL_CONTENT}
-        panelClass={REVEAL_PANEL}
-        art={
-          <>
-            <ReefAnchor state="bleached" />
-            <div className="absolute inset-0 bg-milky/10" />
-            <Particles className="opacity-10" />
-            <ReefScrims />
-          </>
-        }
-      />
-
-      {/* 06 — Hands: bleached→recovery blend + the restoration method. */}
-      <SceneShell
-        moment={m.hands}
-        sectionClass="min-h-[86svh] items-stretch md:min-h-[92vh]"
-        contentClass={REVEAL_CONTENT}
-        panelClass={REVEAL_PANEL}
-        art={
-          <>
-            <ReefAnchor state="bleached" />
-            <ReefAnchor state="recovery" className="opacity-45" />
-            <Particles className="opacity-20" />
-            <ReefScrims />
-          </>
-        }
-      >
-        <ol className="mt-8 space-y-5">
-          {restorationMethod.map((step) => (
-            <li key={step.n} className="flex gap-4">
-              <span className="font-serif text-2xl tabular-nums text-gold">
-                {step.n}
-              </span>
-              <div>
-                <h3 className="font-serif text-lg leading-snug">{step.title}</h3>
-                <p className="mt-1 font-sans text-sm text-paper/85">
-                  {step.body}
-                </p>
-              </div>
-            </li>
-          ))}
-        </ol>
-      </SceneShell>
-
-      {/* 07 — The Way Up: partial recovery, colour returning. */}
-      <SceneShell
-        moment={m["way-up"]}
-        sectionClass="min-h-[84svh] items-stretch md:min-h-[90vh]"
-        contentClass={REVEAL_CONTENT}
-        panelClass={REVEAL_PANEL}
-        art={
-          <>
-            <ReefAnchor state="recovery" />
-            <Light className="opacity-35" />
-            <Particles className="opacity-25" />
-            <ReefScrims />
-          </>
-        }
-      />
-
-      {/* 08 — Air: the ascent and the decision. Recovery reef along the lower edge. */}
+      {/* 08 — Air: ascent + decision; reef low in frame, longest seam fade. */}
       <SceneShell
         moment={m.air}
-        sectionClass="min-h-[88svh] items-center bg-gradient-to-b from-teal via-deep to-abyss md:min-h-[92vh]"
+        sectionClass="min-h-[88svh] items-center md:min-h-[92vh]"
         contentClass="items-center justify-center text-center"
         panelClass="mx-auto"
         art={
           <>
-            <ReefAnchor
-              state="recovery"
-              className="opacity-45"
-              style={{ maskImage: FADE_UP_LOW, WebkitMaskImage: FADE_UP_LOW }}
+            <AmbientVideo
+              webmSrc={`${VID}/air.webm`}
+              mp4Src={`${VID}/air.mp4`}
+              posterSrc={`${POSTER}/air-poster.png`}
+              seamFadeStart={5.95}
+              objectPosition="center bottom"
             />
-            <Light className="opacity-30" />
-            <Particles className="opacity-25" />
             <div className="absolute inset-0 scrim-veil" />
           </>
         }
@@ -230,9 +96,7 @@ export function StoryJourney() {
               href={action.href}
               className={`block rounded-xl border-t-4 bg-paper/95 p-5 text-abyss transition-transform hover:-translate-y-1 focus-visible:-translate-y-1 ${accentBorder[action.accent]}`}
             >
-              <strong className="block font-serif text-lg">
-                {action.title}
-              </strong>
+              <strong className="block font-serif text-lg">{action.title}</strong>
               <span className="mt-1 block font-sans text-sm text-abyss/80">
                 {action.detail}
               </span>
