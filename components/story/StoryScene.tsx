@@ -1,53 +1,63 @@
+import type { ReactNode } from "react";
 import type { StoryMoment } from "@/content/story";
 
-const toneClass: Record<StoryMoment["tone"], string> = {
-  surface: "tone-surface",
-  healthy: "tone-healthy",
-  warming: "tone-warming",
-  bleached: "tone-bleached",
-  recovery: "tone-recovery",
-};
-
-export function StoryScene({
+/**
+ * Semantic, cinematic scene wrapper: a full-bleed <section> whose background
+ * "stage" (reef anchors, layers, overlays, scrims) is supplied per scene via
+ * `art`, with the copy floated over a calm region of the artwork. Positioning
+ * and height vary by scene through the *Class props — the shell only guarantees
+ * the shared structure and accessibility (labelled section, single h2, readable
+ * copy width). Not a generic renderer: each scene composes its own `art`.
+ */
+export function SceneShell({
   moment,
+  sectionClass = "",
+  contentClass = "",
+  panelClass = "",
+  art,
   children,
 }: {
   moment: StoryMoment;
-  children?: React.ReactNode;
+  sectionClass?: string;
+  contentClass?: string;
+  panelClass?: string;
+  art?: ReactNode;
+  children?: ReactNode;
 }) {
+  const { id, index, name, heading, support, transition } = moment;
   return (
     <section
-      id={moment.id}
-      aria-labelledby={`${moment.id}-heading`}
-      className="mx-auto grid max-w-6xl items-center gap-8 px-4 py-16 sm:px-6 md:grid-cols-2 md:py-24"
+      id={id}
+      aria-labelledby={`${id}-heading`}
+      className={`scene flex ${sectionClass}`}
     >
-      <div className="max-w-prose">
-        <p className="font-sans text-xs uppercase tracking-[0.25em] text-paper/60">
-          {String(moment.index).padStart(2, "0")} · {moment.name}
-        </p>
-        <h2
-          id={`${moment.id}-heading`}
-          className="mt-3 text-3xl leading-tight sm:text-4xl"
-        >
-          {moment.heading}
-        </h2>
-        <p className="mt-4 text-base text-paper/90 sm:text-lg">
-          {moment.support}
-        </p>
-        {moment.transition ? (
-          <p className="mt-6 font-sans text-xs uppercase tracking-[0.18em] text-paper/50">
-            {moment.transition}
+      {art ? (
+        <div className="scene-art" aria-hidden="true">
+          {art}
+        </div>
+      ) : null}
+      <div
+        className={`scene-content mx-auto flex w-full max-w-6xl px-4 py-20 sm:px-6 md:py-28 ${contentClass}`}
+      >
+        <div className={`max-w-prose ${panelClass}`}>
+          <p className="font-sans text-xs uppercase tracking-[0.25em] text-paper/70">
+            {String(index).padStart(2, "0")} · {name}
           </p>
-        ) : null}
-        {children}
+          <h2
+            id={`${id}-heading`}
+            className="scene-heading mt-3 text-3xl leading-tight sm:text-4xl md:text-5xl"
+          >
+            {heading}
+          </h2>
+          <p className="mt-4 text-lg text-paper/95 sm:text-xl">{support}</p>
+          {transition ? (
+            <p className="mt-6 font-sans text-xs uppercase tracking-[0.18em] text-paper/70">
+              {transition}
+            </p>
+          ) : null}
+          {children}
+        </div>
       </div>
-
-      {/* Media area: restrained tonal placeholder; accepts layered art later. */}
-      <figure className={`scene-media ${toneClass[moment.tone]} md:min-h-72`}>
-        <figcaption className="absolute inset-x-0 bottom-0 bg-abyss/55 p-3 font-sans text-xs text-paper/85">
-          {moment.mediaCaption}
-        </figcaption>
-      </figure>
     </section>
   );
 }

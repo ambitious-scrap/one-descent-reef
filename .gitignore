@@ -12,6 +12,7 @@ coverage/
 __MACOSX/
 .memsearch/
 .serena/
+.claude/
 *.tsbuildinfo
 
 

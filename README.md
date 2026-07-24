@@ -3,7 +3,7 @@
 **Tagline:** Go down with the light. Come up with a reason.
 **Hackathon:** HackOcean 2026
 **Problem Statement:** PS 02 — REEF | Ocean Conservation Platform
-**Status:** Static multi-page foundation complete (no animation, no final artwork)
+**Status:** Static multi-page foundation with integrated reef artwork complete (no animation)
 
 ---
 
@@ -35,7 +35,7 @@ npm run typecheck  # tsc --noEmit
 | `/`          | Landing story — the eight-moment descent, ending in Mission / Volunteer / Support links |
 | `/mission`   | REEF mission, bleaching science, and conservation principles |
 | `/impact`    | Restoration projects, monitoring, and illustrative recovery figures |
-| `/volunteer` | Volunteer roles and an accessible (unvalidated) sign-up form shell |
+| `/volunteer` | Volunteer roles and an accessible, validated sign-up form (demonstration only) |
 | `/support`   | Simulated giving tiers and a transparent where-support-goes breakdown |
 
 ## Implementation status
@@ -47,8 +47,10 @@ Done:
 - Landing page with all eight approved story moments in order
 - Responsive site header (current-page indication, keyboard focus, disclosure
   mobile nav) and footer
-- CSS-only tonal reef foundation (healthy → warming → bleached → recovery) with
-  per-scene media areas ready to receive layered artwork
+- Locked reef artwork integrated as static, art-directed scenes: eight
+  full-bleed moments (healthy → warming → bleached → recovery) built from
+  responsive `<picture>` anchors (portrait crop on mobile, landscape on desktop)
+  plus screen-blended light/particle overlays — no animation, no scroll effects
 - Accessibility foundation: skip link, single h1, semantic sections, focus
   states, reduced-motion CSS, labelled form controls
 - Per-page metadata, viewport, and text-only Open Graph
@@ -62,7 +64,6 @@ Done:
 
 Planned but not yet built:
 
-- Final reef artwork
 - GSAP / ScrollTrigger scroll choreography
 - Color Memory interaction and organism hotspots
 - Advanced interaction polish, custom cursor, page transitions, audio
