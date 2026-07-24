@@ -53,16 +53,23 @@ Done:
   states, reduced-motion CSS, labelled form controls
 - Per-page metadata, viewport, and text-only Open Graph
 - Coherent without JavaScript (no scroll hijacking, no autoplay)
+- Validated volunteer application form (React Hook Form + Zod, one typed
+  schema, accessible field-level errors, first-error focus, live-region
+  confirmation — demonstration only, no network request)
+- Simulated conservation-support flow (frequency, suggested or custom rupee
+  amount, focus area, summary → confirm with edit/back, accessible success
+  state — no payment processing and no financial details collected)
 
 Planned but not yet built:
 
+- Final reef artwork
 - GSAP / ScrollTrigger scroll choreography
 - Color Memory interaction and organism hotspots
-- Final layered reef artwork and audio
-- React Hook Form + Zod form validation and a submission backend
-- Donation processing
-- Custom cursor and advanced page transitions
+- Advanced interaction polish, custom cursor, page transitions, audio
 - Deployment
+
+Intentionally absent: any real backend, database, email delivery, payment
+gateway, or donation receipts. Both flows are demonstrations.
 
 ## Prototype
 
