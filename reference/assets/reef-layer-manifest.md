@@ -8,7 +8,7 @@
 
 ### Original generated source
 
-`reference/assets/layer-sources/layer-seafan-foreground-healthy-checkerboard-source.png`
+Raw generation source archived outside the public repository.
 
 ### Details
 
@@ -33,7 +33,7 @@
 
 ### Preview composites
 
-See `reference/assets/layer-tests/layer-seafan-foreground-healthy-on-{white,black,teal,magenta}.png`
+Raw generation source and test composites archived outside the public repository.
 
 ---
 
@@ -45,7 +45,7 @@ See `reference/assets/layer-tests/layer-seafan-foreground-healthy-on-{white,blac
 
 ### Original generated source
 
-`reference/assets/layer-sources/layer-seafan-foreground-bleached-checkerboard-source.png`
+Raw generation source archived outside the public repository.
 
 ### Details
 
@@ -86,7 +86,7 @@ See `reference/assets/layer-tests/layer-seafan-foreground-healthy-on-{white,blac
 
 ### Original generated source
 
-`reference/assets/layer-sources/layer-fusilier-school-healthy-white-source.png`
+Raw generation source archived outside the public repository.
 
 ### Details
 
@@ -119,7 +119,7 @@ See `reference/assets/layer-tests/layer-seafan-foreground-healthy-on-{white,blac
 
 ### Original generated source
 
-`reference/assets/layer-sources/layer-fusilier-school-recovery-white-source.png`
+Raw generation source archived outside the public repository.
 
 ### Details
 
@@ -152,7 +152,7 @@ See `reference/assets/layer-tests/layer-seafan-foreground-healthy-on-{white,blac
 
 ### Original generated source
 
-`reference/assets/layer-sources/layer-fish-solitary-bleached-white-source.png`
+Raw generation source archived outside the public repository.
 
 ### Details
 
@@ -185,7 +185,7 @@ See `reference/assets/layer-tests/layer-seafan-foreground-healthy-on-{white,blac
 
 ### Original generated source
 
-`reference/assets/layer-sources/layer-turtle-healthy-white-source.png`
+Raw generation source archived outside the public repository.
 
 ### Details
 
@@ -218,7 +218,7 @@ See `reference/assets/layer-tests/layer-seafan-foreground-healthy-on-{white,blac
 
 ### Original generated source
 
-`reference/assets/layer-sources/layer-turtle-bleached-white-source.png`
+Raw generation source archived outside the public repository.
 
 ### Details
 

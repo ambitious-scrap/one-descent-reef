@@ -18,14 +18,7 @@
 
 ## Candidate mapping
 
-| Original Downloads filename | Repository path |
-|---------------------------|-----------------|
-| `Candidate A.png` | `reference/assets/anchor-candidates/anchor-candidate-a.png` |
-| `Candidate B1.png` | `reference/assets/anchor-candidates/anchor-candidate-b1.png` |
-| `Candidate B2.png` | `reference/assets/anchor-candidates/anchor-candidate-b2.png` |
-| `Candidate C1.png` | `reference/assets/anchor-candidates/anchor-candidate-c1.png` |
-| `Candidate C2.png` | `reference/assets/anchor-candidates/anchor-candidate-c2.png` |
-| `ChatGPT Image Jul 24, 2026, 05_03_22 PM.png` | `reference/assets/anchor-candidates/anchor-candidate-d.png` |
+Raw generation sources archived outside the public repository.
 
 ## Notes
 

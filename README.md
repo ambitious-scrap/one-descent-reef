@@ -78,6 +78,13 @@ The original approved static prototype is preserved, unchanged, at
 [`reference/prototype/index.html`](reference/prototype/index.html). It is the
 reference implementation of the eight-scene story and its interactions.
 
+## Asset policy
+
+Only production-ready optimized visual assets belong in `public/`. Raw
+generations, rejected candidates, source images, test composites, and event
+documents are stored outside this repository in a local project archive. The
+public repository intentionally excludes large working files.
+
 ## AI-assisted tools disclosure
 
 AI-assisted development tools used: ChatGPT, Claude Code, OpenCode.
