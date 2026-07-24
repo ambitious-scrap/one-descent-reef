@@ -1,17 +1,12 @@
-import Link from "next/link";
 import { SceneShell } from "./StoryScene";
 import { AmbientVideo } from "@/components/media/AmbientVideo";
 import { LivingReefAtlas } from "./LivingReefAtlas";
-import { storyMoments, finalActions, finalLine } from "@/content/story";
+import { CurrentThread } from "./CurrentThread";
+import { ActionHorizon } from "./ActionHorizon";
+import { storyMoments } from "@/content/story";
 
 const VID = "/videos/open-water";
 const POSTER = "/images/reef/open-water/posters";
-
-const accentBorder: Record<string, string> = {
-  seaglass: "border-t-seaglass",
-  gold: "border-t-gold",
-  coral: "border-t-coral",
-};
 
 export function StoryJourney() {
   const m = Object.fromEntries(
@@ -25,7 +20,8 @@ export function StoryJourney() {
 
   return (
     <div>
-      {/* 01 — Underlight: open-water video, the descent begins; no reef yet. */}
+      {/* 01 — Underlight: open-water video, the descent begins; no reef yet.
+          The Current Thread first gathers at the lower edge (Bridge 1). */}
       <SceneShell
         moment={m.underlight}
         sectionClass="min-h-[80svh] items-end md:min-h-[88vh]"
@@ -41,11 +37,13 @@ export function StoryJourney() {
               objectPosition="center"
             />
             <div className="absolute inset-0 scrim-b" />
+            <CurrentThread tone="healthy" edge="bottom" flow="down" />
           </>
         }
       />
 
-      {/* 02 — The Blue Road: distant-reveal video; no reef anchor over the clip. */}
+      {/* 02 — The Blue Road: distant-reveal video. The thread continues in from
+          above (Bridge 1) and widens toward the reef below (Bridge 2). */}
       <SceneShell
         moment={m["blue-road"]}
         sectionClass="min-h-[66svh] items-center md:min-h-[72vh]"
@@ -60,6 +58,8 @@ export function StoryJourney() {
               objectPosition="center"
             />
             <div className="absolute inset-0 scrim-veil" />
+            <CurrentThread tone="healthy" edge="top" flow="down" />
+            <CurrentThread tone="healthy" edge="bottom" flow="down" />
           </>
         }
       />
@@ -67,10 +67,11 @@ export function StoryJourney() {
       {/* 03–07 — Living Reef Atlas: static scenes, pinned+scrubbed on desktop. */}
       <LivingReefAtlas moments={atlasMoments} />
 
-      {/* 08 — Air: ascent + decision; reef low in frame, longest seam fade. */}
+      {/* 08 — Air: ascent + decision; reef low in frame, longest seam fade. The
+          thread curves up out of the reef (Bridge 4) into the action horizon. */}
       <SceneShell
         moment={m.air}
-        sectionClass="min-h-[88svh] items-center md:min-h-[92vh]"
+        sectionClass="min-h-[92svh] items-center md:min-h-[96vh]"
         contentClass="items-center justify-center text-center"
         panelClass="mx-auto"
         art={
@@ -83,27 +84,11 @@ export function StoryJourney() {
               objectPosition="center bottom"
             />
             <div className="absolute inset-0 scrim-veil" />
+            <CurrentThread tone="recovery" edge="top" flow="up" />
           </>
         }
       >
-        <nav
-          aria-label="Take action"
-          className="mt-8 grid gap-4 text-left sm:grid-cols-3"
-        >
-          {finalActions.map((action) => (
-            <Link
-              key={action.href}
-              href={action.href}
-              className={`block rounded-xl border-t-4 bg-paper/95 p-5 text-abyss transition-transform hover:-translate-y-1 focus-visible:-translate-y-1 ${accentBorder[action.accent]}`}
-            >
-              <strong className="block font-serif text-lg">{action.title}</strong>
-              <span className="mt-1 block font-sans text-sm text-abyss/80">
-                {action.detail}
-              </span>
-            </Link>
-          ))}
-        </nav>
-        <p className="mt-8 font-sans italic text-paper/90">{finalLine}</p>
+        <ActionHorizon />
       </SceneShell>
     </div>
   );

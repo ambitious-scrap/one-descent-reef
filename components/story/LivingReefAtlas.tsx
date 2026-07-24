@@ -7,6 +7,7 @@ import { SceneShell } from "./StoryScene";
 import { ReefAnchor } from "./ReefAnchor";
 import { ArtLayer } from "./ArtLayer";
 import { ColorMemory } from "./ColorMemory";
+import { CurrentThread } from "./CurrentThread";
 import type { StoryMoment } from "@/content/story";
 import { restorationMethod } from "@/content/story";
 
@@ -82,6 +83,7 @@ export function LivingReefAtlas({ moments }: { moments: StoryMoment[] }) {
           const coolVeil = q(".atlas-cool");
           const seafanH = q(".atlas-seafan-h");
           const seafanB = q(".atlas-seafan-b");
+          const seafanB2 = q(".atlas-seafan-b2");
           const schoolH = q(".atlas-school-h");
           const schoolR = q(".atlas-school-r");
           const solo = q(".atlas-solo");
@@ -92,7 +94,7 @@ export function LivingReefAtlas({ moments }: { moments: StoryMoment[] }) {
 
           // Chapter 0 — Living Wall baseline.
           gsap.set(healthy, { opacity: 1 });
-          gsap.set([bleached, recovery, warmVeil, coolVeil, seafanB, solo, schoolR], {
+          gsap.set([bleached, recovery, warmVeil, coolVeil, seafanB, seafanB2, solo, schoolR], {
             opacity: 0,
           });
           gsap.set(light, { opacity: 0.4 });
@@ -184,6 +186,7 @@ export function LivingReefAtlas({ moments }: { moments: StoryMoment[] }) {
             .to(coolVeil, { opacity: 1 }, 1)
             .to(seafanH, { opacity: 0 }, 1)
             .to(seafanB, { opacity: 0.85 }, 1)
+            .fromTo(seafanB2, { opacity: 0, xPercent: 10 }, { opacity: 0.72, xPercent: 0 }, 1)
             .to(schoolH, { opacity: 0 }, 1)
             .to(solo, { opacity: 0.8 }, 1)
             .to(panels[1], { opacity: 0, yPercent: -4 }, 1)
@@ -200,6 +203,7 @@ export function LivingReefAtlas({ moments }: { moments: StoryMoment[] }) {
           tl.to(recovery, { opacity: 1 }, 3)
             .to(bleached, { opacity: 0 }, 3)
             .to(seafanB, { opacity: 0.2 }, 3)
+            .to(seafanB2, { opacity: 0 }, 3)
             .to(seafanH, { opacity: 0.35 }, 3)
             .to(light, { opacity: 0.3 }, 3)
             .to(particles, { opacity: 0.25 }, 3)
@@ -271,6 +275,12 @@ export function LivingReefAtlas({ moments }: { moments: StoryMoment[] }) {
               the anchor paintings already carry a turtle). */}
           <ArtLayer src={SEAFAN_H} className="atlas-seafan-h -left-10 bottom-[-4%] w-72" />
           <ArtLayer src={SEAFAN_B} className="atlas-seafan-b -left-10 bottom-[-4%] w-72" />
+          {/* Bridge 3 — a partial bleached sea-fan drifts in from the right as
+              the warm water passes into the Pale Zone, kept clear of the copy. */}
+          <ArtLayer
+            src={SEAFAN_B}
+            className="atlas-seafan-b2 -right-8 bottom-[-4%] w-40 -scale-x-100 md:w-48"
+          />
           <ArtLayer
             src={SCHOOL_H}
             className="atlas-school-h left-[28%] top-[40%] w-72 will-change-transform"
@@ -397,6 +407,7 @@ function StaticScenes({ moments }: { moments: StoryMoment[] }) {
             <ArtLayer src={PARTICLES} className={`${screen} opacity-30`} />
             <ArtLayer src={SEAFAN_H} className="-left-10 bottom-[-4%] w-36 opacity-90 sm:w-52 md:w-72" />
             <Scrims />
+            <CurrentThread tone="healthy" edge="top" flow="down" />
           </>
         }
       />
@@ -413,6 +424,8 @@ function StaticScenes({ moments }: { moments: StoryMoment[] }) {
             <div className="absolute inset-0 bg-[radial-gradient(130%_90%_at_22%_-8%,rgba(242,168,92,0.44),transparent_56%),linear-gradient(180deg,rgba(236,148,68,0.22),transparent_48%,rgba(6,28,45,0.34))]" />
             <ArtLayer src={PARTICLES} className={`${screen} opacity-20`} />
             <Scrims />
+            {/* Bridge 3 — the current desaturates as it sinks toward the Pale Zone. */}
+            <CurrentThread tone="warm" edge="bottom" flow="down" />
           </>
         }
       />
@@ -454,6 +467,8 @@ function StaticScenes({ moments }: { moments: StoryMoment[] }) {
             <ArtLayer src={LIGHT} className={`${screen} opacity-35`} />
             <ArtLayer src={PARTICLES} className={`${screen} opacity-25`} />
             <Scrims />
+            {/* Bridge 4 — the current curves up out of the reef toward the surface. */}
+            <CurrentThread tone="recovery" edge="bottom" flow="up" />
           </>
         }
       />
@@ -492,6 +507,8 @@ function StaticPaleScene({ moment }: { moment: StoryMoment }) {
           <div className="absolute inset-0 bg-milky/10" />
           <ArtLayer src={PARTICLES} className={`${screen} opacity-10`} />
           <Scrims />
+          {/* Bridge 3 — the desaturated current settling into the Pale Zone. */}
+          <CurrentThread tone="pale" edge="top" flow="down" />
         </>
       }
     >

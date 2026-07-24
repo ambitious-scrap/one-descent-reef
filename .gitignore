@@ -22,3 +22,5 @@ __MACOSX/
 *.swp
 *.swo
 *~
+.vercel
+.env*

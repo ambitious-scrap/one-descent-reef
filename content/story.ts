@@ -115,20 +115,20 @@ export const finalActions = [
   {
     href: "/mission",
     title: "Learn the mission",
-    detail: "Understand REEF’s fictional conservation approach and the science behind the story.",
-    accent: "seaglass" as const,
+    detail: "Explore the science and conservation approach behind the descent.",
+    role: "mission" as const,
   },
   {
     href: "/volunteer",
     title: "Volunteer",
-    detail: "Explore demonstration roles in monitoring, education, restoration, and outreach.",
-    accent: "gold" as const,
+    detail: "Choose a role in monitoring, education, restoration, or outreach.",
+    role: "volunteer" as const,
   },
   {
     href: "/support",
     title: "Support the work",
-    detail: "See how a simulated contribution could be directed across conservation priorities.",
-    accent: "coral" as const,
+    detail: "See how a simulated contribution supports reef priorities.",
+    role: "support" as const,
   },
 ];
 

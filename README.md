@@ -3,7 +3,7 @@
 **Tagline:** Go down with the light. Come up with a reason.
 **Hackathon:** HackOcean 2026
 **Problem Statement:** PS 02 — REEF | Ocean Conservation Platform
-**Status:** Static multi-page foundation with integrated reef artwork complete (no animation)
+**Status:** Complete cinematic reef-experience concept with accessible fallbacks
 
 ---
 
@@ -45,14 +45,36 @@ Done:
 - Next.js App Router + React + TypeScript + Tailwind CSS
 - All five routes with real content (no placeholders)
 - Landing page with all eight approved story moments in order
-- Responsive site header (current-page indication, keyboard focus, disclosure
-  mobile nav) and footer
-- Locked reef artwork integrated as static, art-directed scenes: eight
-  full-bleed moments (healthy → warming → bleached → recovery) built from
-  responsive `<picture>` anchors (portrait crop on mobile, landscape on desktop)
-  plus screen-blended light/particle overlays — no animation, no scroll effects
+- Three ambient open-water video scenes (Underlight, Blue Road, Air) with
+  static poster fallbacks under reduced motion or video failure
+- Living Reef Atlas — Scenes 3–7 progressively enhanced into one pinned,
+  scroll-scrubbed reef stage (GSAP + ScrollTrigger) on wide desktops; the
+  accessible static scenes remain the fallback on mobile, narrow tablet,
+  reduced-motion, or when JavaScript is unavailable
+- Healthy, warming, bleached, restoration, and partial-recovery progression
+- Color Memory — a soft radial reveal that remembers the reef's lost colour
+  during the Pale Zone: a CSS-masked healthy overlay follows the pointer over
+  the aligned bleached geometry (one rAF, no per-frame React state), with a
+  native "Remember colour" button for a restrained full-frame comparison. The
+  pointer reveal is desktop-only; mobile and reduced-motion get the same
+  button-toggled comparison as an accessible static equivalent
+- Current Thread — a recurring underwater continuity motif tying scenes
+  together with restrained CSS animation (static under reduced motion)
+- Cinematic responsive header with optically centred three-column layout,
+  mobile full-screen menu, keyboard Escape support, and one-threshold scroll
+  detection (no per-frame React state)
+- Quiet editorial action system — soft paper-bloom hover and focus treatment
+  on interactive elements
+- Action Horizon — the closing section replacing card-style links with quiet
+  editorial options
+- Cinematic compact footer with Current Thread, GitHub link, and AI-assisted
+  disclosure
+- Responsive reef artwork integrated as art-directed scenes: eight full-bleed
+  moments (healthy → warming → bleached → recovery) built from responsive
+  `<picture>` anchors plus screen-blended light/particle overlays
 - Accessibility foundation: skip link, single h1, semantic sections, focus
-  states, reduced-motion CSS, labelled form controls
+  states, focus-visible outlines, reduced-motion CSS, labelled form controls,
+  inert inactive panels, aria-pressed on toggles
 - Per-page metadata, viewport, and text-only Open Graph
 - Coherent without JavaScript (no scroll hijacking, no autoplay)
 - Validated volunteer application form (React Hook Form + Zod, one typed
@@ -61,29 +83,13 @@ Done:
 - Simulated conservation-support flow (frequency, suggested or custom rupee
   amount, focus area, summary → confirm with edit/back, accessible success
   state — no payment processing and no financial details collected)
-- Cinematic open-water video loops (Underlight, Blue Road, Air) via a lazy,
-  silent `AmbientVideo` component: IntersectionObserver activation, offscreen
-  and hidden-tab pausing, poster-fade loop-seam masking, and a poster-only
-  fallback under reduced motion or video failure
-- Living Reef Atlas — Scenes 3–7 progressively enhanced into one pinned,
-  scroll-scrubbed reef stage (GSAP + ScrollTrigger) on wide desktops; the
-  accessible static scenes remain the fallback on mobile, narrow tablet,
-  reduced-motion, or when JavaScript is unavailable
-- Color Memory — a soft radial reveal that remembers the reef's lost colour
-  during the Pale Zone: a CSS-masked healthy overlay follows the pointer over
-  the aligned bleached geometry (one rAF, no per-frame React state), with a
-  native "Remember colour" button for a restrained full-frame comparison. The
-  pointer reveal is desktop-only; mobile and reduced-motion get the same
-  button-toggled comparison as an accessible static equivalent
+- Deployed to Vercel (static export, no server runtime)
 
-Planned but not yet built:
-
-- Organism hotspots (per-species reef annotations)
-- Advanced interaction polish, custom cursor, page transitions, audio
-- Deployment
+GSAP is the only animation dependency. No WebGL or Three.js is used.
 
 Intentionally absent: any real backend, database, email delivery, payment
-gateway, or donation receipts. Both flows are demonstrations.
+gateway, or donation receipts. Both flows are demonstrations. REEF is a
+fictional ocean-conservation organization created for the ONE DESCENT concept.
 
 ## Prototype
 
